@@ -18,7 +18,7 @@ def pick_color(event,x,y,flags,param):
         pixel = image_hsv[name][y,x]
 
         #you might want to adjust the ranges(+-10, etc):
-        lm = 30
+        lm = 50
         upper =  np.array([pixel[0] + lm, pixel[1] + lm, pixel[2] + lm])
         lower =  np.array([pixel[0] - lm, pixel[1] - lm, pixel[2] - lm])
         lowers[name] = [lower[0],lower[1],lower[2]]
@@ -36,7 +36,7 @@ def calibrate_color(name_, use_frame = False, frame=None):
     if use_frame and not frame is None:
         image_src = frame
     else:
-        image_src = get_video()
+        image_src = getCamVideo()#get_video()
     if image_src is None:
         print ("the image read is None............")
         return
@@ -99,7 +99,7 @@ def drawDetectColors(name, frame, color, colorName="Bottle", use_frame=False, c=
             cv2.circle(frame, (cX, cY), 3,c,2)
             cv2.putText(frame,colorName,(cX, cY), cv2.FONT_HERSHEY_PLAIN, 1,c,2,cv2.LINE_AA)
             center = [[cX, cY], colorName]
+            cv2.drawContours(frame, [cnt], 0, c, 3)
             break
-            # cv2.drawContours(frame, [cnt], 0, c, 3)
     cv2.imshow(name,frame)
     return center

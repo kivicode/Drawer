@@ -1,5 +1,5 @@
 from BasicFunctions import *
-from Drawing.ParseArduino import eval
+# from Drawing.ParseArduino import eval
 import cv2
 import cv2.aruco as aruco
 import main

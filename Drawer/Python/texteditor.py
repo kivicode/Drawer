@@ -29,7 +29,7 @@ root.configure(bg=bcgColor)
 
 text = Text(root, font="Monaco 14", wrap='word', bg=bcgColor, bd = -1, highlightbackground=bcgColor, highlightthickness=0, insertbackground="white", fg="white")
 text.place(x=45, y=2, height=16*53)
-text.insert("1.0", "")
+text.insert("1.0", "r = Rect(90, 90, width, height)\nr2 = Rect(90,90,90,90)")
 root.geometry("640x480")
 hintList = Listbox(root, highlightbackground='white')
 hintList.config(bg=bcgColor, bd=0, width=12, height = 1)
@@ -82,28 +82,29 @@ def search(df):
     curLine = int(str(text.index(INSERT)).split(".")[0])-1
     curChar = int(str(text.index(INSERT)).split(".")[1])
     id = 0
-
+    
     for i in lines:
         if len(i) != 0:
             for tagName in text.tag_names():
-                if not tagName in ["default", "sel"]:
-                    text.tag_remove(tagName, "%d.0" % (curLine+1),  index2="%d.%d" % (curLine+1, len(i)))
+                text.tag_remove(tagName, "%d.0" % (curLine+1),  index2="%d.%d" % (curLine+1, len(i)))
             codeOutput += i + "\n"
             copy = i
             parts = []
             for delim in DELIMETERS:
                 copy = "|".join(copy.split(delim))
             parts = getUnical(delName(copy.split("|"), ""))
-            if "=" in parts and not i.startswith(" "*4):
-                if parts[2] in keywords and keywords[parts[2]] == 'function':
-                    globalVars.append(parts[0])
-            elif not i.startswith(" "*4):
-                if parts[1] in keywords and keywords[parts[1]] == 'operation':
-                    globalVars.remove(parts[2])
+            if len(parts) > 2:
+                if "=" in parts and not i.startswith(" "*4):
+                    if parts[2] in keywords and keywords[parts[2]] == 'function':
+                        globalVars.append(parts[0])
+                elif not i.startswith(" "*4):
+                    if parts[1] in keywords and keywords[parts[1]] == 'operation':
+                        globalVars.remove(parts[2])
             for part in parts:
                 if part in keywords:
                     tag = keywords[part]
                     for p in find_all(i, part):
+                        print(tag, p)
                         text.tag_add(tag, "%d.%d" % (curLine+1, p),  "%d.%d" % (curLine+1, p + len(part)))
             for var in globalVars:
                 codeOutput += "draw(%s)\n" % (var)
@@ -136,17 +137,7 @@ def compileHints(keys):
             for custom, constructor in functionConstructors.items():
                 if custom == key:
                     name = functionConstructors[key]
-                    parts = []
-                    copy = name
-                    for delim in DELIMETERS:
-                        copy = "|".join(copy.split(delim))
-                    parts = getUnical(delName(copy.split("|"), ""))[1:]
-                    for p in parts:
-                        newOptions.append(p)
             dic[key] = makeHint(name)
-    newOptions = getUnical(newOptions)
-    for op in newOptions:
-        keywords[op] = "hintoption"
     return dic
 
 def all_nums(str):
@@ -308,7 +299,7 @@ text.tag_config('operator', foreground=pinkColor)
 text.tag_config('function', foreground=blueColor)
 text.tag_config('operation', foreground=orangeColor)
 text.tag_config('number', foreground=numColor)
-text.tag_config('hintoption', background=hintColor, foreground='black')
+# text.tag_config('hintoption', background=hintColor, foreground='black')
 text.tag_config('default', foreground='white')
 
 keywords = {

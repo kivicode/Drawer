@@ -6,40 +6,47 @@ from Detection.QRCodeDetection import *
 from Detection.BarcodeDetection import *
 from Detection.ColorDetection import *
 from Detection.ObjectDetection import *
-from Drawing.DrawWay import *
-from Drawing.ParseArduino import eval
-from Drawing.FollowWay import *
-from Tests.test import *
+from Detection.ContourDetection import *
+# from Drawing.DrawWay import *
+# from Drawing.ParseArduino import eval
+# from Drawing.FollowWay import *
+# from Tests.test import *
 from BasicFunctions import *
+import cv2
 depth = False
 marker = False
 qrcode = False
 bottles = False
-objects = True
+objects = False
 test = False
 colors = True
-main.calibrateByMarker = False
+# main.calibrateByMarker = False
 
 globalName = "Depth"
 
 distToObject = 0
 
 path = ["f(900)", "r(90)", "f(400)"]
-
 fr = True
 
+
+    
 if __name__ == "__main__":
     # writeToFile("Commands.txt", "", clear=True)
-    frame = get_video()
+    # frame = get_video()
     cv2.namedWindow(globalName, cv2.WND_PROP_FULLSCREEN)
+
     #follow(path)
     while 1:
-        frame = get_video()
+        frame = getCamVideo()#get_video()
+        detectContours(globalName+"1",getCamVideo())
+    
 
-        dm = getDepthMap()
+        # dm = getDepthMap()
         #getBrightest(dm, 100)
         #cv2.circle(frame, minLoc, 5, 3,(0,255,0),2)
-        cv2.imshow("Depth Map", dm)
+        # print(camFrame)
+        # cv2.imshow("Monipulator Cam", frame)
 
         if depth:
             drawContours(globalName, frame, 500, False)
@@ -60,11 +67,11 @@ if __name__ == "__main__":
 
         if colors:
             pulpy = drawDetectColors(globalName, frame, 0, colorName="Pulpy", c=(0,0,255))
-            lipton = drawDetectColors(globalName, frame, 1, colorName="Lipton", c=(0,255,0))
+            # lipton = drawDetectColors(globalName, frame, 1, colorName="Lipton", c=(0,255,0))
             # followPoint(pulpy[0])
-            if fr and pulpy[0] != [0,0]:
-                followPoint(pulpy[0])
-                fr = False
+            # if fr and pulpy[0] != [0,0]:
+            #     followPoint(pulpy[0])
+            #     fr = False
             # drawDetectColors(globalName, frame, 1, c=(0,255,0))
             # drawDetectColors(globalName, frame, 2, c=(255,0,0))
 

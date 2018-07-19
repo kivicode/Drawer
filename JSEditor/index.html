@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <script src="lightgl.js"></script>
+  <script src="csg.js"></script>
+  <script src="viewer.js"></script>
+<script src="mirr/lib/codemirror.js"></script>
+<link rel="stylesheet" href="mirr/lib/codemirror.css">
+<script src="mirr/mode/javascript/javascript.js"></script>
+<style src="mirr/theme/dracula.css"></style>
+<script src="mirr/addon/hint/show-hint.js"></script>
+<div id="code"></div>
+<style type="text/css">
+.cm-s-dracula.CodeMirror, .cm-s-dracula .CodeMirror-gutters {
+  background-color: #282a36 !important;
+  color: #f8f8f2 !important;
+  border: none;
+}
+.cm-s-dracula .CodeMirror-gutters { color: #282a36; }
+.cm-s-dracula .CodeMirror-cursor { border-left: solid thin #f8f8f0; }
+.cm-s-dracula .CodeMirror-linenumber { color: #6D8A88; }
+.cm-s-dracula .CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
+.cm-s-dracula .CodeMirror-line::selection, .cm-s-dracula .CodeMirror-line > span::selection, .cm-s-dracula .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-dracula .CodeMirror-line::-moz-selection, .cm-s-dracula .CodeMirror-line > span::-moz-selection, .cm-s-dracula .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-dracula span.cm-comment { color: #6272a4; }
+.cm-s-dracula span.cm-string, .cm-s-dracula span.cm-string-2 { color: #f1fa8c; }
+.cm-s-dracula span.cm-number { color: #bd93f9; }
+.cm-s-dracula span.cm-variable { color: #50fa7b; }
+.cm-s-dracula span.cm-variable-2 { color: white; }
+.cm-s-dracula span.cm-def { color: #50fa7b; }
+.cm-s-dracula span.cm-operator { color: #ff79c6; }
+.cm-s-dracula span.cm-keyword { color: #ff79c6; }
+.cm-s-dracula span.cm-atom { color: #bd93f9; }
+.cm-s-dracula span.cm-meta { color: #f8f8f2; }
+.cm-s-dracula span.cm-tag { color: #ff79c6; }
+.cm-s-dracula span.cm-attribute { color: #50fa7b; }
+.cm-s-dracula span.cm-qualifier { color: #50fa7b; }
+.cm-s-dracula span.cm-property { color: #66d9ef; }
+.cm-s-dracula span.cm-builtin { color: #50fa7b; }
+.cm-s-dracula span.cm-variable-3, .cm-s-dracula span.cm-type { color: #ffb86c; }
+
+.cm-s-dracula .CodeMirror-activeline-background { background: rgba(255,255,255,0.1); }
+.cm-s-dracula .CodeMirror-matchingbracket { text-decoration: underline; color: white !important; }
+
+</style>
+<link rel="stylesheet" href="mirr/addon/hint/show-hint.css">
+
+
+<div id="0" class="viewer">
+  <!-- <canvas width="400" height="400" align="right" style="background: rgb(255,255,255)"></canvas> -->
+</div>
+
+</head>
+<body>
+
+  <textarea id="tryit" style="margin: 0px; width: 100%; height: 200px;">var a = Cube();
+/*var b = Sphere(135)
+var f = Sphere(80)
+var c = Cylinder([-1, 0, 0], [1, 0, 0], 70);
+var d = Cylinder([0, -1, 0], [0, 1, 0], 70);
+var e = Cylinder([0, 0, -1], [0, 0, 1], 70);
+a.color(255, 0, 0)
+b.color(0, 0, 255)
+c.color(0, 255, 0)
+d.color(0, 255, 0)
+e.color(0, 255, 0)*/
+return a//.diff(b).cut(c.add(d).add(e)).add(f)
+
+</textarea>
+<script type="text/javascript" src="js/textcontroll.js"></script>
+<p id="error"></p>
+  <script type="text/javascript" src="js/export.js"></script>
+  <script src="js/main.js"></script>
+  <script type="text/javascript"></script>
+  <button onclick="toSTL()">Compile</button>
+
+</body></html>

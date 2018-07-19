@@ -1,7 +1,7 @@
 from PIL import Image
 from Drawing.DrawWay import *
 import kinect_lib.freenect as freenect
-from Drawing.ParseArduino import eval as evl
+# from Drawing.ParseArduino import eval as evl
 import cv2
 import numpy as np
 import math
@@ -16,6 +16,18 @@ current_depth = 0
 
 mov_x = 0.08
 mov_y = 0.06
+
+cam = cv2.VideoCapture(0)
+cam.set(3 , 640  ) # width        
+cam.set(4 , 480  ) # height       
+cam.set(10, 120  ) # brightness     min: 0   , max: 255 , increment:1  
+cam.set(11, 50   ) # contrast       min: 0   , max: 255 , increment:1     
+cam.set(12, 70   ) # saturation     min: 0   , max: 255 , increment:1
+cam.set(13, 13   ) # hue         
+cam.set(14, 50   ) # gain           min: 0   , max: 127 , increment:1
+cam.set(15, -3   ) # exposure       min: -7  , max: -1  , increment:1
+cam.set(17, 5000 ) # white_balance  min: 4000, max: 7000, increment:1
+cam.set(28, 0    ) # focus          min: 0   , max: 255 , increment:5
 
 def auto_canny(image, sigma=0.33):
     # compute the median of the single channel pixel intensities
@@ -33,6 +45,10 @@ def fixPoint(x,y):
     x = x - x*mov_x
     y = y + y*mov_y
     return (int(x),int(y))
+
+def getCamVideo():
+    rval, camFrame = cam.read()
+    return camFrame
 
 def change_threshold(value):
     global threshold
