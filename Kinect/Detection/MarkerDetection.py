@@ -6,7 +6,7 @@ import main
 font = cv2.FONT_HERSHEY_PLAIN
 
 
-def drawMarkers(name, frame, calibrateByMarker = False, dist = 0):
+def drawMarkers(name, frame, calibrateByMarker = False, goalMarker = -1, dist = 0):
     aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
     parameters =  aruco.DetectorParameters_create()
          
@@ -17,7 +17,6 @@ def drawMarkers(name, frame, calibrateByMarker = False, dist = 0):
 
     if len(corners) >= 1:
         rect = cv2.boxPoints(cv2.minAreaRect(corners[0]))
-        cv2.drawContours(frame,[np.int0(rect)],-1,(0,0,255),3)
         id_count = 0;
         current = np.int0(rect)
         midx = 0
@@ -25,30 +24,23 @@ def drawMarkers(name, frame, calibrateByMarker = False, dist = 0):
         for pos in current:
             midx += pos[0]
             midy += pos[1]
-            cv2.circle(frame,(pos[0], pos[1]),3,(255,255,0),2)
+            if calibrateByMarker and ids[0][0] == goalMarker:
+                cv2.circle(frame,(pos[0], pos[1]),3,(255,255,0),2)
         midx /= len(current)
         midy /= len(current)
-        dist = int(getDist(midx,midy))+20
+        dist = (int(getDist(midx+10,midy-10))+20)*0.837
         angle = getAngleFromDepth(midx, midy, dist, w)
         dY = math.tan(math.radians(angle))*int(dist)
         ndY = map(dY, -407, 407, 0, 2000)
-        print(ids[id_count][0])
+        print(current[0])
         cv2.circle(frame,(int(midx), int(midy)),3,(255,0,255),2)
             #print(dist, angle, dY)
-        if calibrateByMarker and ids[id_count][0] == 4:
-            print("Marker found")
-            angle = getAngleFromDepth(midx, midy, dist, w)
-            #angle = map(angle, -20, 20, -25, 25)
-            side = "right"
-            if angle < 0:
-                side = "left"
-            eval(side+"("+str(abs(angle))+");")
-            eval("f("+str(dist*0.67)+");")
-            #      print("Boolean =", main.calibrateByMarker, "Id =", ids[id_count][0])
         n = str(ids[id_count][0])
         midx -= (len(n)-1)*10
         midy += 10
-        cv2.putText(frame,n,(int(midx),int(midy)), font, 3,(255,255,255),2,cv2.LINE_AA)
+        if calibrateByMarker and ids[0][0] == goalMarker:
+            cv2.drawContours(frame,[np.int0(rect)],-1,(0,0,255),3)
+        #cv2.putText(frame,n,(int(midx),int(midy)), font, 3,(255,255,255),2,cv2.LINE_AA)
         id_count += 1
     cv2.imshow(name,detect)
 

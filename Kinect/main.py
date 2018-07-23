@@ -7,6 +7,7 @@ from Detection.BarcodeDetection import *
 from Detection.ColorDetection import *
 from Detection.ObjectDetection import *
 from Detection.ContourDetection import *
+from Detection.EllipseDetection import *
 # from Drawing.DrawWay import *
 # from Drawing.ParseArduino import eval
 # from Drawing.FollowWay import *
@@ -19,7 +20,8 @@ qrcode = False
 bottles = False
 objects = False
 test = False
-colors = True
+colors = False
+ellipse = True
 # main.calibrateByMarker = False
 
 globalName = "Depth"
@@ -38,24 +40,21 @@ if __name__ == "__main__":
 
     #follow(path)
     while 1:
-        frame = getCamVideo()#get_video()
-        detectContours(globalName+"1",getCamVideo())
+        frame = get_video()
+        # detectContours(globalName+"1",get_video())
     
 
         # dm = getDepthMap()
         #getBrightest(dm, 100)
         #cv2.circle(frame, minLoc, 5, 3,(0,255,0),2)
         # print(camFrame)
-        # cv2.imshow("Monipulator Cam", frame)
+        # cv2.imshow("Monipulator Cam", dm)
 
         if depth:
             drawContours(globalName, frame, 500, False)
 
         if marker:
-            newDist = float(main.distToObject) * 0.33
-            drawMarkers(globalName, frame, calibrateByMarker =False, dist = newDist)
-            # print(main.calibrateByMarker)
-            main.calibrateByMarker = False
+            drawMarkers(globalName, frame, calibrateByMarker = True, goalMarker = 5)
         if qrcode:
             drawDecodedQRcode(globalName, frame)
 
@@ -66,17 +65,20 @@ if __name__ == "__main__":
             drawObjects(globalName, frame)
 
         if colors:
-            pulpy = drawDetectColors(globalName, frame, 0, colorName="Pulpy", c=(0,0,255))
+            drawDetectColors(globalName, frame, 0, colorName="Pulpy", c=(0,0,255))
             # lipton = drawDetectColors(globalName, frame, 1, colorName="Lipton", c=(0,255,0))
             # followPoint(pulpy[0])
             # if fr and pulpy[0] != [0,0]:
             #     followPoint(pulpy[0])
             #     fr = False
-            # drawDetectColors(globalName, frame, 1, c=(0,255,0))
-            # drawDetectColors(globalName, frame, 2, c=(255,0,0))
+            drawDetectColors(globalName, frame, 1, colorName="Pepsi", c=(0,255,0))
+            drawDetectColors(globalName, frame, 2, colorName="Lipton", c=(255,0,0))
 
         if test:
             surfDetection(globalName, frame)
+
+        if ellipse:
+            detectShapes(globalName, frame)
 
  
         k = cv2.waitKey(5) & 0xFF
@@ -94,6 +96,8 @@ if __name__ == "__main__":
             objects = (not objects)
         elif k == ord('p'):
             calibrateByMarker = not calibrateByMarker
+        elif k == ord('e'):
+            ellipse = not ellipse
         elif k == ord('r'):
             reset()
         elif k == ord('g'):
