@@ -17,11 +17,11 @@ import cv2
 depth = False
 marker = False
 qrcode = False
-bottles = False
+bottles = True
 objects = False
 test = False
 colors = False
-ellipse = True
+ellipse = False
 # main.calibrateByMarker = False
 
 globalName = "Depth"

@@ -1,6 +1,6 @@
 import main
 from BasicFunctions import *
-# from Drawing.ParseArduino import eval
+from Drawing.ParseArduino import eval
 import numpy as np
 import imutils
 import cv2
@@ -26,11 +26,13 @@ firstRun = True
 
 dists = 0
 
+px = None
+
 def reset():
 	runId = 0
 
 def drawObjects(name, frame, filter = "all", return_bottle_imgs = False):
-	global fr, shift, runId, dists, firstRun
+	global fr, shift, runId, dists, firstRun, px
 
 	img = None	
 
@@ -51,8 +53,11 @@ def drawObjects(name, frame, filter = "all", return_bottle_imgs = False):
 		idx = int(detections[0, 0, i, 1])
 		box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 		(startX, startY, endX, endY) = box.astype("int")
-		centerX = (startX+endX)/2
-		centerY = (startY+endY)/2
+		psx = startX
+		startX = startX-((endX-startX)/2)
+		endX = endX-((endX-psx)/2)
+		centerX = int((startX+endX)/2)
+		centerY = int((startY+endY)/2)
 
 		if confidence * 100 >= fr and (filter == "all" or CLASSES[idx] == filter):
 			label = "{}".format(CLASSES[idx],
@@ -62,8 +67,8 @@ def drawObjects(name, frame, filter = "all", return_bottle_imgs = False):
 			endX -= shift
 			startY += shift+20
 			endY -= shift
-			img = frame[startY:endY, startX:endX]
-			color = compute_average_image_color(img)
+			# img = frame[startY:endY, startX:endX]
+			# color = compute_average_image_color(img)
 			i += 1
 
 			#cv2.rectangle(frame, (startX, startY), (endX, endY),
@@ -72,34 +77,25 @@ def drawObjects(name, frame, filter = "all", return_bottle_imgs = False):
 			if filter == "bottle":
 				text = ""
 				#writeToFile("Commands.txt", "", clear = True)
-				color = compute_average_image_color(img)
-				real_color = get_real_color(color)
+				# color = compute_average_image_color(img)
+				# real_color = get_real_color(color)
 				dist = getDist(map(centerX-5, 0, w, 0, 300), map(centerY, 0, h, 0, 300))
 				if int(dist) != 0:
-					angle = getAngleFromDepth(centerX, centerY, dist, w)
-
-					#print("Angle = " + str(np.floor(angle)), dist)
-					#angle = angleToArduino(angle)
-					#if firstRun:
-					side = 'right'
-					if angle < 0:
-						side = 'left'
-					if firstRun:
-						print("Set angle from bottle")
-						eval(side + '('+str((abs(angle))*1.78)+');')
-				main.distToObject = dist
-				dist = int(dist)# * 0.66
-				dists += dist
-				if firstRun:
-					main.calibrateByMarker = True
+					angle = int(getAngleFromDepth(centerX, centerY, dist, w)/1.6)
+				
+				if px == None:
+					px = centerX
+				if firstRun and abs(centerX-px) < 150:
+					# main.calibrateByMarker = True
 					# dist = dists/10
-					print("Set dist from bottle")
-					eval(text + 'f('+str((dist))+');')
-				runId += 1
-				firstRun = False
-				cv2.rectangle(frame, (startX, startY), (endX, endY),
+					# print("Set dist from bottle")
+					eval('gt(' + str(angle) + ', ' + str(dist) + ')')
+					runId += 1
+					px = centerX
+					firstRun = False
+				cv2.rectangle(frame, fixPoint(startX, startY), fixPoint(endX, endY),
 				COLORS[idx], 2)
-				cv2.putText(frame, real_color + str(dist), (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255, 2)
+				# cv2.putText(frame, real_color + str(dist), (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255, 2)
 			else:
 				cv2.putText(frame, label, (startX, y),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)

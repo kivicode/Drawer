@@ -1,12 +1,15 @@
 from BasicFunctions import *
-# from Drawing.ParseArduino import eval
+from Drawing.ParseArduino import eval
+from time import sleep as delay
 import cv2
 import cv2.aruco as aruco
 import main
 font = cv2.FONT_HERSHEY_PLAIN
 
+ft = True
 
 def drawMarkers(name, frame, calibrateByMarker = False, goalMarker = -1, dist = 0):
+    global ft
     aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
     parameters =  aruco.DetectorParameters_create()
          
@@ -28,18 +31,25 @@ def drawMarkers(name, frame, calibrateByMarker = False, goalMarker = -1, dist = 
                 cv2.circle(frame,(pos[0], pos[1]),3,(255,255,0),2)
         midx /= len(current)
         midy /= len(current)
-        dist = (int(getDist(midx+10,midy-10))+20)*0.837
-        angle = getAngleFromDepth(midx, midy, dist, w)
+        dist = int((int(getDist(midx+10,midy-10))+20)*0.837)
+        angle = int(getAngleFromDepth(midx, midy, dist, w))
         dY = math.tan(math.radians(angle))*int(dist)
         ndY = map(dY, -407, 407, 0, 2000)
-        print(current[0])
         cv2.circle(frame,(int(midx), int(midy)),3,(255,0,255),2)
             #print(dist, angle, dY)
         n = str(ids[id_count][0])
         midx -= (len(n)-1)*10
         midy += 10
-        if calibrateByMarker and ids[0][0] == goalMarker:
+        if calibrateByMarker and ids[0][0] == goalMarker and ft:
             cv2.drawContours(frame,[np.int0(rect)],-1,(0,0,255),3)
+            rot = ("l(" if angle <= 0 else "r(") + str(abs(angle)) + ")"
+            mov = "gt("+str(angle) + ", " + str(dist+150) + ")"#"f(" + str(dist-200) + ")"
+            eval(mov)
+            # eval(rot)
+            # delay(5)
+            # eval(mov) 
+            print(mov)
+            ft = False;
         #cv2.putText(frame,n,(int(midx),int(midy)), font, 3,(255,255,255),2,cv2.LINE_AA)
         id_count += 1
     cv2.imshow(name,detect)
